@@ -69,17 +69,20 @@ Medium Chatbot’un mimarisi aşağıdaki bileşenlerden oluşur:
 git clone https://github.com/Melikeacar/medium-chatbot.git
 cd medium-chatbot
 
-```bash
+
 2️⃣ Sanal Ortam Oluştur
+```bash
 python -m venv venv
 .\venv\Scripts\activate   # Windows
 
-```bash
+
 3️⃣ Bağımlılıkları Kur
+```bash
 pip install -r requirements.txt
 
-```bash
+
 4️⃣ Ollama Modelini İndir
+```bash
 ollama pull llama3.1:8b-instruct-q4_0
 
 Ollama servisinin çalıştığından emin ol:
@@ -145,4 +148,5 @@ Frontend
 HTML
 CSS
 Vanilla JavaScript
+
 
