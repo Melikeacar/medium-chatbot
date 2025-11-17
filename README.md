@@ -63,7 +63,7 @@ Medium Chatbot’un mimarisi aşağıdaki bileşenlerden oluşur:
 
 ## ⚙️ Kurulum
 
-### 1️⃣ Depoyu Klonla
+ 1️⃣ Depoyu Klonla
 
 ```bash
 git clone https://github.com/Melikeacar/medium-chatbot.git
@@ -145,3 +145,4 @@ Frontend
 HTML
 CSS
 Vanilla JavaScript
+
