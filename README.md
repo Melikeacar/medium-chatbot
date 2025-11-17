@@ -68,3 +68,80 @@ Medium Chatbot’un mimarisi aşağıdaki bileşenlerden oluşur:
 ```bash
 git clone https://github.com/Melikeacar/medium-chatbot.git
 cd medium-chatbot
+
+```bash
+2️⃣ Sanal Ortam Oluştur
+python -m venv venv
+.\venv\Scripts\activate   # Windows
+
+```bash
+3️⃣ Bağımlılıkları Kur
+pip install -r requirements.txt
+
+```bash
+4️⃣ Ollama Modelini İndir
+ollama pull llama3.1:8b-instruct-q4_0
+
+Ollama servisinin çalıştığından emin ol:
+```bash
+ollama serve
+
+5️⃣ Backend’i Başlat
+```bash
+cd src
+python main.py
+
+
+medium-chatbot/
+│
+├── config/
+│   ├── checklist.json        # Kural ve ağırlık sistemi
+│   └── prompts.json          # AI prompt yapılandırması
+│
+├── src/
+│   ├── main.py               # Flask uygulama girişi
+│   ├── analyzer.py           # Analiz ve puanlama mantığı
+│   ├── scraper.py            # Medium içerik çekici
+│   └── templates/
+│       └── index.html        # Web arayüzü
+│
+├── requirements.txt
+├── Dockerfile
+└── README.md
+
+
+🧠 Analiz Akışı
+
+Kullanıcı Medium linkini arayüze girer
+
+Backend, scraper.py ile makaleyi indirir
+
+analyzer.py, checklist ve prompt’ları yükler
+
+Prompt hazırlanıp Ollama’ya gönderilir
+
+LLM yanıtından JSON analiz sonucu çıkarılır
+
+Ağırlıklı puan hesaplanır ve kullanıcıya gösterilir
+
+
+
+📦 Kullanılan Teknolojiler
+
+Backend
+
+Python 3.13
+Flask
+Flask-CORS
+Requests
+
+AI
+
+Ollama
+Llama 3.1 8B
+JSON tabanlı prompt tasarımı
+
+Frontend
+HTML
+CSS
+Vanilla JavaScript
