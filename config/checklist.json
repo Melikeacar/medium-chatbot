@@ -1,0 +1,201 @@
+{
+  "yönetmelik_adı": "Turkiye AR-GE Center External Tech Content Publishing Policy",
+  "versiyon": "1.1",
+  "belge_bilgileri": {
+    "önceki_versiyon": "V1.0",
+    "hazırlayan": "Omer Kaya",
+    "sorumlu_departman": "QOD",
+    "yayın_tarihi": "2025-06-26",
+    "geçerlilik_süresi": "2 yıl"
+  },
+  "sistemler": [
+    { "kod": "ETRANS", "ad": "Etrans Workflow System", "kullanım": "Gönderim ve onay akışı" },
+    { "kod": "REPO", "ad": "Publishing Group Drive", "kullanım": "İçerik ve checklist depolama" }
+  ],
+  "roller_ve_sorumluluklar": [
+    { "rol": "Yazar", "sorumluluklar": ["Konu belirleme ve içerik hazırlama","Özgünlük (intihal yok)","Uyumluluk checklist’ini doldurma","İçerik+checklist yükleme","Fikri mülkiyet sözleşmesi imzalama"] },
+    { "rol": "İnceleme_Ekibi", "sorumluluklar": ["Kalite ve uyum incelemesi","Politika/gizlilik kontrolü","Geri bildirim ve revizyon","Toplantı yapma ve MoM paylaşımı"] },
+    { "rol": "Proje_Yöneticisi", "sorumluluklar": ["MoM’u e-posta ile paydaşlara iletme","Tutanak doğrulama"] },
+    { "rol": "Departman_Direktörü", "sorumluluklar": ["Nihai teknik/özgünlük/uyum incelemesi","Politika ve gizlilik uygunluğu","Karar/geri bildirim kaydı","Yayın öncesi üst seviye onay"] }
+  ],
+  "yayın_süreci": [
+    { "adım_kodu": 1, "adım_adı": "Başlangıç", "sorumlu_rol": "Yazar", "girdi": "İçerik fikri", "çıktı": "Taslak iskelet", "açıklama": "Konu ve materyaller hazırlanır." },
+    { "adım_kodu": 2, "adım_adı": "İçerik Hazırlığı", "sorumlu_rol": "Yazar", "girdi": "Taslak iskelet", "çıktı": "İçerik dosyası", "açıklama": "Özgün içerik; AI çıktılarına edit uygulanır." },
+    { "adım_kodu": 3, "adım_adı": "Uyumluluk Kontrolü", "sorumlu_rol": "Yazar", "girdi": "İçerik dosyası", "çıktı": "Harici Yayın Kontrol Listesi", "açıklama": "Checklist tamamlanır." },
+    { "adım_kodu": 4, "adım_adı": "Yükleme", "sorumlu_rol": "Yazar", "girdi": "İçerik+Checklist", "çıktı": "Yüklenmiş artefaktlar", "açıklama": "REPO’ya yüklenir." },
+    { "adım_kodu": 5, "adım_adı": "İnceleme Toplantısı", "sorumlu_rol": "İnceleme_Ekibi", "girdi": "Artefaktlar", "çıktı": "MoM", "açıklama": "Temel+teknik kontroller." },
+    { "adım_kodu": 6, "adım_adı": "MoM Paylaşımı", "sorumlu_rol": "Proje_Yöneticisi", "girdi": "İçerik, sonuç, checklist", "çıktı": "Paylaşılan MoM", "açıklama": "E-posta ile dağıtım." },
+    { "adım_kodu": 7, "adım_adı": "Etrans Üzerinden Gönderim", "sorumlu_rol": "İnceleme_Ekibi", "girdi": "İçerik dosyası", "çıktı": "Etrans gönderimi", "açıklama": "Üst seviye onay akışı." },
+    { "adım_kodu": 8, "adım_adı": "Son Onay", "sorumlu_rol": "Departman_Direktörü", "girdi": "Etrans gönderimi", "çıktı": "Etrans onay sonucu", "açıklama": "Nihai onay." },
+    { "adım_kodu": 9, "adım_adı": "Harici Yayın", "sorumlu_rol": "Yazar", "girdi": "Onaylı içerik", "çıktı": "Yayımlanmış içerik", "açıklama": "Harici platformda yayın." }
+  ],
+  "durum_kodlari": {
+    "uygun": "Tam uyumlu",
+    "kismen_uygun": "Kısmi uyum",
+    "uygun_degil": "Uyumsuz",
+    "belirsiz": "Kanıt yetersiz"
+  },
+"puanlama_sistemi": {
+  "agirlik_araligi": "1-10",
+  "toplama_yontemi": "agirlikli_ortalama",
+  "zorunlu_ihlal_cezasi": 10,
+  "araliklar": {
+    "mukemmel": { "min": 90, "max": 100, "aciklama": "Üst düzey uyum" },
+    "iyi":       { "min": 70, "max": 89,  "aciklama": "Genel olarak iyi" },
+    "orta":      { "min": 50, "max": 69,  "aciklama": "Kısmi uyum" },
+    "zayif":     { "min": 30, "max": 49,  "aciklama": "Düşük uyum" },
+    "basarisiz": { "min": 0,  "max": 29,  "aciklama": "Uyumsuz" }
+  }
+},
+  "kontrol_maddeleri": [
+    {
+      "id": "kalite_ozgunluk",
+      "kategori": "Kalite",
+      "baslik": "Özgün ve kopyasız içerik",
+      "aciklama": "İntihal ve telif riskleri IP sorunlarına yol açar.",
+      "agirlik": 8,
+      "risk_seviyesi": "Yüksek",
+      "zorunlu": true,
+      "sorumlu_rol": "Yazar",
+      "anahtar_kelimeler": ["özgün", "intihal", "telif", "kaynak"],
+      "rapor_sablonu": { "durum": "", "puan": 0, "kanitlar": [], "notlar": "" }
+    },
+    {
+      "id": "kalite_ai_duzenleme",
+      "kategori": "Kalite",
+      "baslik": "AI çıktıları yeterince düzenlendi",
+      "aciklama": "AI içerikleri doğruluk ve özgünlük için editlenmeli.",
+      "agirlik": 6,
+      "risk_seviyesi": "Orta",
+      "zorunlu": false,
+      "sorumlu_rol": "Yazar",
+      "anahtar_kelimeler": ["AI", "LLM", "revizyon"],
+      "rapor_sablonu": { "durum": "", "puan": 0, "kanitlar": [], "notlar": "" }
+    },
+    {
+      "id": "kalite_pazarlama_yok",
+      "kategori": "Kalite",
+      "baslik": "Pazarlama dili yok",
+      "aciklama": "Teknik yazılarda satış/promosyon dili bulunmamalı.",
+      "agirlik": 6,
+      "risk_seviyesi": "Orta",
+      "zorunlu": true,
+      "sorumlu_rol": "İnceleme_Ekibi",
+      "anahtar_kelimeler": ["pazarlama", "promosyon", "reklam"],
+      "rapor_sablonu": { "durum": "", "puan": 0, "kanitlar": [], "notlar": "" }
+    },
+    {
+      "id": "kalite_teknik_odak",
+      "kategori": "Kalite",
+      "baslik": "Teknik odak",
+      "aciklama": "Mantık, senaryo ve kod uygulamalarına odak.",
+      "agirlik": 6,
+      "risk_seviyesi": "Orta",
+      "zorunlu": false,
+      "sorumlu_rol": "İnceleme_Ekibi",
+      "anahtar_kelimeler": ["teknik", "kod", "use case"],
+      "rapor_sablonu": { "durum": "", "puan": 0, "kanitlar": [], "notlar": "" }
+    },
+    {
+      "id": "yazi_dili_aciklik",
+      "kategori": "Kalite",
+      "baslik": "Açık ve yapılandırılmış dil",
+      "aciklama": "Okunabilir, yapılandırılmış ve öz anlatım.",
+      "agirlik": 4,
+      "risk_seviyesi": "Düşük",
+      "zorunlu": false,
+      "sorumlu_rol": "İnceleme_Ekibi",
+      "anahtar_kelimeler": ["okunabilirlik", "yapı", "açıklık"],
+      "rapor_sablonu": { "durum": "", "puan": 0, "kanitlar": [], "notlar": "" }
+    },
+    {
+      "id": "gorsel_lisansli",
+      "kategori": "Varlıklar",
+      "baslik": "Lisanslı/telifsiz görseller",
+      "aciklama": "CC0/Unsplash/Pexels ve gerekiyorsa atıf.",
+      "agirlik": 8,
+      "risk_seviyesi": "Yüksek",
+      "zorunlu": true,
+      "sorumlu_rol": "Yazar",
+      "anahtar_kelimeler": ["CC0", "Unsplash", "Pexels", "lisans"],
+      "rapor_sablonu": { "durum": "", "puan": 0, "kanitlar": [], "notlar": "" }
+    },
+    {
+      "id": "gorsel_atif",
+      "kategori": "Varlıklar",
+      "baslik": "Görsellerde kaynak/atıf var",
+      "aciklama": "Her görsel için açık atıf ya da link.",
+      "agirlik": 6,
+      "risk_seviyesi": "Orta",
+      "zorunlu": true,
+      "sorumlu_rol": "Yazar",
+      "anahtar_kelimeler": ["görsel kaynağı", "atıf", "link"],
+      "rapor_sablonu": { "durum": "", "puan": 0, "kanitlar": [], "notlar": "" }
+    },
+    {
+      "id": "kod_ozel_lisans",
+      "kategori": "Güvenlik",
+      "baslik": "Özel/kapalı kod yok",
+      "aciklama": "İç/kapatılmış kodların paylaşımı yasaktır.",
+      "agirlik": 10,
+      "risk_seviyesi": "Yüksek",
+      "zorunlu": true,
+      "sorumlu_rol": "Yazar",
+      "anahtar_kelimeler": ["proprietary", "closed source", "lisans"],
+      "rapor_sablonu": { "durum": "", "puan": 0, "kanitlar": [], "notlar": "" }
+    },
+    {
+      "id": "kod_gizli_veri",
+      "kategori": "Güvenlik",
+      "baslik": "Kodda gizli veri yok",
+      "aciklama": "Token/kimlik/API anahtarı/sırlar ifşa edilmez.",
+      "agirlik": 10,
+      "risk_seviyesi": "Yüksek",
+      "zorunlu": true,
+      "sorumlu_rol": "Yazar",
+      "anahtar_kelimeler": ["token", "credential", "API key", "secret", "URL"],
+      "rapor_sablonu": { "durum": "", "puan": 0, "kanitlar": [], "notlar": "" }
+    },
+    {
+      "id": "gizlilik_dahili_bilgi",
+      "kategori": "Gizlilik",
+      "baslik": "Dahili bilgi paylaşımı yok",
+      "aciklama": "İş bilgisi/ticari sırlar açıklanmaz.",
+      "agirlik": 10,
+      "risk_seviyesi": "Yüksek",
+      "zorunlu": true,
+      "sorumlu_rol": "İnceleme_Ekibi",
+      "anahtar_kelimeler": ["confidential", "internal", "trade secret"],
+      "rapor_sablonu": { "durum": "", "puan": 0, "kanitlar": [], "notlar": "" }
+    },
+    {
+      "id": "gizlilik_ic_ekran",
+      "kategori": "Gizlilik",
+      "baslik": "Dahili araç ekran görüntüsü yok",
+      "aciklama": "Dashboard/repo gibi kapalı araçlar paylaşılmaz.",
+      "agirlik": 9,
+      "risk_seviyesi": "Yüksek",
+      "zorunlu": true,
+      "sorumlu_rol": "İnceleme_Ekibi",
+      "anahtar_kelimeler": ["screenshot", "dashboard", "internal tool"],
+      "rapor_sablonu": { "durum": "", "puan": 0, "kanitlar": [], "notlar": "" }
+    },
+    {
+      "id": "gizlilik_duyurulmamis",
+      "kategori": "Gizlilik",
+      "baslik": "Duyurulmamış teknoloji/roadmap yok",
+      "aciklama": "Pre-launch özellik/roadmap/benchmark açıklanmaz.",
+      "agirlik": 10,
+      "risk_seviyesi": "Yüksek",
+      "zorunlu": true,
+      "sorumlu_rol": "Departman_Direktörü",
+      "anahtar_kelimeler": ["undisclosed", "NDA", "roadmap", "pre-launch"],
+      "rapor_sablonu": { "durum": "", "puan": 0, "kanitlar": [], "notlar": "" }
+    }
+  ],
+  "şikayet_yönetimi": {
+    "basit_şikayet_çözüm_süresi": "1 iş günü",
+    "karmaşık_şikayet_çözüm_süresi": "7 iş günü",
+    "tekrarlayan_şikayetler": "Aynı tarafça tekrarlanan başvurulara izin verilmez ve kaldırılabilir."
+  }
+}

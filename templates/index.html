@@ -1,0 +1,582 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Medium Checker - İçerik Analizi</title>
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+
+    body {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 20px;
+    }
+
+    .container {
+      background: white;
+      border-radius: 20px;
+      box-shadow: 0 20px 40px rgba(0,0,0,0.1);
+      padding: 40px;
+      width: 100%;
+      max-width: 1000px;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .container::before {
+      content: '';
+      position: absolute;
+      top: 0; left: 0; right: 0;
+      height: 5px;
+      background: linear-gradient(90deg, #ff6b6b, #4ecdc4, #45b7d1, #96ceb4);
+    }
+
+    .header { text-align: center; margin-bottom: 40px; }
+    .header h1 { color: #2c3e50; font-size: 2.5rem; margin-bottom: 10px; font-weight: 700; }
+    .header p { color: #7f8c8d; font-size: 1.1rem; margin-bottom: 20px; }
+
+    .status-bar {
+      background: #f8f9fa;
+      border-radius: 10px;
+      padding: 15px;
+      margin-bottom: 20px;
+      border-left: 4px solid #28a745;
+      display: none;
+    }
+
+    .url-input-section { margin-bottom: 30px; }
+    .input-group { display: flex; gap: 15px; margin-bottom: 20px; }
+
+    .url-input {
+      flex: 1;
+      padding: 15px 20px;
+      border: 2px solid #e9ecef;
+      border-radius: 10px;
+      font-size: 1rem;
+      transition: all 0.3s ease;
+    }
+    .url-input:focus {
+      outline: none;
+      border-color: #667eea;
+      box-shadow: 0 0 0 3px rgba(102,126,234,0.1);
+    }
+
+    .btn {
+      padding: 15px 30px;
+      border: none;
+      border-radius: 10px;
+      font-size: 1rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .btn-primary { background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; }
+    .btn-primary:hover:not(:disabled) { transform: translateY(-2px); box-shadow: 0 10px 25px rgba(102,126,234,0.3); }
+    .btn-secondary { background: #6c757d; color: white; }
+    .btn:disabled { opacity: 0.6; cursor: not-allowed; }
+
+    .loading { display: none; text-align: center; padding: 20px; }
+    .loading-spinner {
+      width: 40px; height: 40px;
+      border: 4px solid #f3f3f3; border-top: 4px solid #667eea;
+      border-radius: 50%; animation: spin 1s linear infinite;
+      margin: 0 auto 15px;
+    }
+    @keyframes spin { 0% { transform: rotate(0deg);} 100% { transform: rotate(360deg);} }
+
+    .results { display: none; animation: fadeIn 0.5s ease; }
+    @keyframes fadeIn { from { opacity: 0; transform: translateY(20px);} to { opacity: 1; transform: translateY(0);} }
+
+    .result-header {
+      display: flex; align-items: center; justify-content: space-between;
+      margin-bottom: 25px; padding-bottom: 15px; border-bottom: 2px solid #e9ecef;
+    }
+
+    .score-circle {
+      width: 80px; height: 80px; border-radius: 50%;
+      display: flex; align-items: center; justify-content: center;
+      color: white; font-weight: bold; font-size: 1.2rem;
+    }
+    .score-excellent { background: #28a745; }
+    .score-good { background: #17a2b8; }
+    .score-average { background: #ffc107; color: #000; }
+    .score-poor { background: #fd7e14; }
+    .score-fail { background: #dc3545; }
+
+    .article-info { background: #f8f9fa; border-radius: 10px; padding: 20px; margin-bottom: 25px; }
+    .article-info h3 { color: #2c3e50; margin-bottom: 10px; }
+    .article-meta { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 15px; font-size: 0.9rem; color: #6c757d; }
+
+    .rules-analysis { display: grid; grid-template-columns: 1fr 1fr; gap: 25px; }
+    .rules-section { background: #f8f9fa; border-radius: 10px; padding: 20px; }
+    .rules-section h4 { margin-bottom: 15px; display: flex; align-items: center; gap: 10px; }
+
+    .rule-item { background: white; border-radius: 8px; padding: 15px; margin-bottom: 10px; border-left: 4px solid; }
+    .rule-success { border-left-color: #28a745; }
+    .rule-warning { border-left-color: #ffc107; }
+    .rule-error { border-left-color: #dc3545; }
+    .rule-item h5 { margin-bottom: 5px; color: #2c3e50; }
+    .rule-item p { font-size: 0.9rem; color: #6c757d; margin: 0; }
+
+    .history-section { margin-top: 40px; padding-top: 30px; border-top: 2px solid #e9ecef; }
+    .history-item {
+      background: #f8f9fa; border-radius: 10px; padding: 15px; margin-bottom: 10px;
+      display: flex; justify-content: space-between; align-items: center;
+      cursor: pointer; transition: background 0.3s ease;
+    }
+    .history-item:hover { background: #e9ecef; }
+
+    .error-message {
+      background: #f8d7da; color: #721c24; padding: 15px; border-radius: 10px;
+      border-left: 4px solid #dc3545; margin: 20px 0; display: none;
+    }
+
+    @media (max-width: 768px) {
+      .container { padding: 20px; margin: 10px; }
+      .header h1 { font-size: 2rem; }
+      .input-group { flex-direction: column; }
+      .rules-analysis { grid-template-columns: 1fr; }
+      .article-meta { grid-template-columns: 1fr; }
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="header">
+      <h1>📊 Medium Checker</h1>
+      <p>Medium makalelerinizi kontrol listesine göre analiz edin</p>
+    </div>
+
+    <div class="status-bar" id="statusBar">
+      <div id="statusText">Sistem hazır ✅</div>
+    </div>
+
+    <div class="url-input-section">
+      <div class="input-group">
+        <input
+          type="url"
+          id="urlInput"
+          class="url-input"
+          placeholder="Medium makale linkini buraya yapıştırın..."
+          autocomplete="off"
+        />
+        <button class="btn btn-primary" id="analyzeBtn" disabled>
+          <span>🔍</span> Analiz Et
+        </button>
+        <button class="btn btn-secondary" id="clearBtn">
+          <span>🗑️</span> Temizle
+        </button>
+      </div>
+    </div>
+
+    <div class="error-message" id="errorMessage"></div>
+
+    <div class="loading" id="loadingSection">
+      <div class="loading-spinner"></div>
+      <p id="loadingText">Analiz başlatılıyor...</p>
+    </div>
+
+    <div class="results" id="resultsSection">
+      <div class="result-header">
+        <div>
+          <h2>📋 Analiz Sonuçları</h2>
+          <p id="analysisTime"></p>
+        </div>
+        <div class="score-circle" id="scoreCircle">
+          <span id="scoreValue">0</span>
+        </div>
+      </div>
+
+      <div class="article-info">
+        <h3 id="articleTitle">Makale Başlığı</h3>
+        <div class="article-meta">
+          <div><strong>Yazar:</strong> <span id="articleAuthor">-</span></div>
+          <div><strong>Kelime Sayısı:</strong> <span id="articleWordCount">-</span></div>
+          <div><strong>Kategori:</strong> <span id="scoreCategory">-</span></div>
+        </div>
+      </div>
+
+      <div class="rules-analysis">
+        <div class="rules-section">
+          <h4>✅ Uygun Kurallar</h4>
+          <div id="successRules"></div>
+        </div>
+        <div class="rules-section">
+          <h4>❌ İhlal Edilen Kurallar</h4>
+          <div id="violatedRules"></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="history-section">
+      <h3>📚 Son Analizler</h3>
+      <div id="historyList"></div>
+    </div>
+  </div>
+
+  <script>
+    // =========================
+    //  API BAĞLANTI AYARI
+    // =========================
+    // Backend'i aynı origin'de servis ediyorsan: const API_BASE = '';
+    // Flask'ı 5000 portunda ayrı çalıştırıyorsan:
+    const API_BASE = 'http://localhost:5000';
+
+    class MediumChecker {
+      constructor() {
+        this.loadingInterval = null; // Initialize loading interval
+        this.init();
+        this.loadHistory();
+        this.checkSystemStatus();
+      }
+
+      init() {
+        this.urlInput = document.getElementById('urlInput');
+        this.analyzeBtn = document.getElementById('analyzeBtn');
+        this.clearBtn = document.getElementById('clearBtn');
+        this.loadingSection = document.getElementById('loadingSection');
+        this.resultsSection = document.getElementById('resultsSection');
+        this.errorMessage = document.getElementById('errorMessage');
+
+        // Başlangıç: buton kilitli
+        this.analyzeBtn.disabled = true;
+
+        this.analyzeBtn.addEventListener('click', () => this.analyzeArticle());
+        this.clearBtn.addEventListener('click', () => this.clearResults());
+
+        this.urlInput.addEventListener('input', () => this.validateUrl());
+        this.urlInput.addEventListener('keydown', (e) => {
+          if (e.key === 'Enter' && !this.analyzeBtn.disabled) {
+            this.analyzeArticle();
+          }
+        });
+      }
+
+      validateUrl() {
+        const raw = this.urlInput.value.trim();
+        let isValid = false;
+
+        if (raw) {
+          try {
+            const u = new URL(raw);
+            const host = (u.hostname || '').toLowerCase();
+            // medium.com veya *.medium.com
+            isValid = host === 'medium.com' || host.endsWith('.medium.com');
+          } catch (e) {
+            // URL constructor failed
+            isValid = false;
+          }
+        }
+
+        this.analyzeBtn.disabled = !isValid;
+      }
+
+      showError(message) {
+        this.errorMessage.textContent = message;
+        this.errorMessage.style.display = 'block';
+        setTimeout(() => {
+          this.errorMessage.style.display = 'none';
+        }, 5000);
+      }
+
+      showLoading(show = true) {
+        this.loadingSection.style.display = show ? 'block' : 'none';
+        if (show) {
+          this.resultsSection.style.display = 'none';
+          this.analyzeBtn.disabled = true;
+          this.updateLoadingText();
+        } else {
+          // Buton durumu inputa göre tekrar belirlenecek
+          this.validateUrl();
+        }
+      }
+
+      updateLoadingText() {
+        const messages = ['Makale çekiliyor... 📄', 'İçerik analiz ediliyor... 🤖', 'Sonuçlar hazırlanıyor... ⚡'];
+        let index = 0;
+        this.clearLoadingInterval();
+        this.loadingInterval = setInterval(() => {
+          const el = document.getElementById('loadingText');
+          if (el) el.textContent = messages[index];
+          index = (index + 1) % messages.length;
+        }, 2000);
+      }
+
+      clearLoadingInterval() {
+        if (this.loadingInterval) {
+          clearInterval(this.loadingInterval);
+          this.loadingInterval = null;
+        }
+      }
+
+      async analyzeArticle() {
+        const url = this.urlInput.value.trim();
+
+        if (!url) {
+          this.showError('Lütfen bir URL girin');
+          return;
+        }
+
+        // Güvenlik: bir kez daha kontrol
+        this.validateUrl();
+        if (this.analyzeBtn.disabled) {
+          this.showError('Lütfen geçerli bir Medium URL\'si girin');
+          return;
+        }
+
+        this.showLoading(true);
+        this.errorMessage.style.display = 'none';
+
+        try {
+          const response = await fetch(`${API_BASE}/analyze`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ url })
+          });
+
+          if (!response.ok) {
+            let serverMsg = '';
+            try {
+              const errJson = await response.json();
+              serverMsg = errJson?.error || '';
+            } catch (parseError) {
+              console.warn('Could not parse error response:', parseError);
+            }
+            throw new Error(serverMsg || `Sunucu hatası (${response.status})`);
+          }
+
+          const result = await response.json();
+
+          if (result.success) {
+            this.displayResults(result.data);
+            this.addToHistory(result.data);
+          } else {
+            throw new Error(result.error || 'Bilinmeyen analiz hatası');
+          }
+        } catch (error) {
+          console.error('Analysis error:', error);
+          this.showError(`Analiz hatası: ${error.message}`);
+        } finally {
+          this.clearLoadingInterval();
+          this.showLoading(false);
+        }
+      }
+
+      displayResults(data) {
+        // Güvenli veri erişimi
+        const score = data?.puan?.deger || 0;
+        const category = data?.puan?.kategori || '-';
+        
+        // Puan & kategori
+        const scoreValue = document.getElementById('scoreValue');
+        const scoreCircle = document.getElementById('scoreCircle');
+        const scoreCategory = document.getElementById('scoreCategory');
+
+        if (scoreValue) scoreValue.textContent = score;
+        if (scoreCategory) scoreCategory.textContent = category;
+
+        // Renk
+        if (scoreCircle) {
+          scoreCircle.className = 'score-circle';
+          if (score >= 90) scoreCircle.classList.add('score-excellent');
+          else if (score >= 75) scoreCircle.classList.add('score-good');
+          else if (score >= 60) scoreCircle.classList.add('score-average');
+          else if (score >= 40) scoreCircle.classList.add('score-poor');
+          else scoreCircle.classList.add('score-fail');
+        }
+
+        // Makale bilgileri - güvenli erişim
+        const articleTitle = document.getElementById('articleTitle');
+        const articleAuthor = document.getElementById('articleAuthor');
+        const articleWordCount = document.getElementById('articleWordCount');
+        const analysisTime = document.getElementById('analysisTime');
+
+        if (articleTitle) articleTitle.textContent = data?.makale?.baslik || '-';
+        if (articleAuthor) articleAuthor.textContent = data?.makale?.yazar || '-';
+        if (articleWordCount) articleWordCount.textContent = data?.makale?.kelime_sayisi || '-';
+        if (analysisTime) analysisTime.textContent = `Analiz zamanı: ${data?.timestamp || '-'}`;
+
+        // Kurallar
+        this.displayRules(data?.kural_analizi);
+
+        // Sonuçları göster
+        this.resultsSection.style.display = 'block';
+      }
+
+      displayRules(rulesAnalysis) {
+        const successRules = document.getElementById('successRules');
+        const violatedRules = document.getElementById('violatedRules');
+
+        if (successRules) successRules.innerHTML = '';
+        if (violatedRules) violatedRules.innerHTML = '';
+
+        // Uygun kurallar
+        const uygunKurallar = rulesAnalysis?.uygun_kurallar || [];
+        uygunKurallar.forEach(rule => {
+          if (successRules) {
+            const ruleDiv = document.createElement('div');
+            ruleDiv.className = 'rule-item rule-success';
+            ruleDiv.innerHTML = `
+              <h5>${rule.baslik || 'Kural'}</h5>
+              <p>${rule.aciklama || ''}</p>
+            `;
+            successRules.appendChild(ruleDiv);
+          }
+        });
+
+        // İhlal edilen kurallar
+        const uygunOlmayanKurallar = rulesAnalysis?.uygun_olmayan_kurallar || [];
+        uygunOlmayanKurallar.forEach(rule => {
+          if (violatedRules) {
+            const ruleDiv = document.createElement('div');
+            const ruleClass = rule.durum === 'kismen_uygun' ? 'rule-warning' : 'rule-error';
+            ruleDiv.className = `rule-item ${ruleClass}`;
+            ruleDiv.innerHTML = `
+              <h5>${rule.baslik || 'Kural'}</h5>
+              <p>${rule.aciklama || ''}</p>
+            `;
+            violatedRules.appendChild(ruleDiv);
+          }
+        });
+
+        // Hiç ihlal yoksa
+        if (violatedRules && uygunOlmayanKurallar.length === 0) {
+          violatedRules.innerHTML = '<p style="text-align: center; color: #28a745;">🎉 Tebrikler! Tüm kurallar geçildi.</p>';
+        }
+      }
+
+      addToHistory(data) {
+        try {
+          let history = JSON.parse(localStorage.getItem('analysisHistory') || '[]');
+          history.unshift({
+            ...data,
+            timestamp: new Date().toISOString()
+          });
+
+          // Sadece son 10
+          history = history.slice(0, 10);
+          localStorage.setItem('analysisHistory', JSON.stringify(history));
+
+          this.displayHistory(history);
+        } catch (error) {
+          console.error('History save error:', error);
+        }
+      }
+
+      loadHistory() {
+        try {
+          const history = JSON.parse(localStorage.getItem('analysisHistory') || '[]');
+          this.displayHistory(history);
+        } catch (error) {
+          console.error('History load error:', error);
+          this.displayHistory([]);
+        }
+      }
+
+      displayHistory(history) {
+        const historyList = document.getElementById('historyList');
+        if (!historyList) return;
+        
+        historyList.innerHTML = '';
+
+        if (!Array.isArray(history) || history.length === 0) {
+          historyList.innerHTML = '<p style="text-align: center; color: #6c757d;">Henüz analiz geçmişi yok</p>';
+          return;
+        }
+
+        history.forEach((item) => {
+          const historyItem = document.createElement('div');
+          historyItem.className = 'history-item';
+
+          const title = (item?.makale?.baslik || '').toString();
+          const shortTitle = title.length > 50 ? title.substring(0, 50) + '...' : title || 'Başlıksız';
+          
+          let displayDate = '-';
+          if (item.timestamp) {
+            try {
+              displayDate = new Date(item.timestamp).toLocaleString('tr-TR');
+            } catch (dateError) {
+              console.warn('Date parse error:', dateError);
+            }
+          }
+
+          historyItem.innerHTML = `
+            <div>
+              <strong>${shortTitle}</strong><br>
+              <small style="color: #6c757d;">${displayDate}</small>
+            </div>
+            <div style="text-align: right;">
+              <span style="font-size: 1.2rem;">${item?.puan?.emoji || '📝'}</span><br>
+              <strong>${(item?.puan?.deger ?? 0)}/100</strong>
+            </div>
+          `;
+
+          historyItem.addEventListener('click', () => {
+            this.displayResults(item);
+            if (item?.makale?.url) {
+              this.urlInput.value = item.makale.url;
+              this.validateUrl();
+            }
+          });
+
+          historyList.appendChild(historyItem);
+        });
+      }
+
+      clearResults() {
+        this.urlInput.value = '';
+        this.resultsSection.style.display = 'none';
+        this.errorMessage.style.display = 'none';
+        this.analyzeBtn.disabled = true; // boşken kilitli
+        
+        // Geçmişi de temizle
+        if (confirm('Analiz geçmişini de temizlemek istiyor musunuz?')) {
+          localStorage.removeItem('analysisHistory');
+          this.displayHistory([]);
+        }
+      }
+
+      async checkSystemStatus() {
+        try {
+          const response = await fetch(`${API_BASE}/health`);
+          if (!response.ok) throw new Error(`Durum ${response.status}`);
+          const status = await response.json();
+
+          const statusBar = document.getElementById('statusBar');
+          const statusText = document.getElementById('statusText');
+
+          if (!statusBar || !statusText) return;
+
+          if (status.status === 'healthy') {
+            const ollamaStatus = status.components?.ollama ? '✅' : '⚠️';
+            statusText.innerHTML = `Sistem hazır ✅ Ollama: ${ollamaStatus}`;
+            statusBar.style.borderLeftColor = '#28a745';
+          } else {
+            statusText.innerHTML = `Sistem hatası ❌ - ${status.error || 'Bilinmeyen hata'}`;
+            statusBar.style.borderLeftColor = '#dc3545';
+          }
+
+          statusBar.style.display = 'block';
+        } catch (error) {
+          console.error('Sistem durumu kontrolü başarısız:', error);
+          // Sessiz başarısızlık - kullanıcıyı rahatsız etmemek için
+        }
+      }
+    }
+
+    // Başlat
+    document.addEventListener('DOMContentLoaded', () => {
+      new MediumChecker();
+    });
+  </script>
+</body>
+</html>
