@@ -90,3 +90,36 @@ Ollama servisinin çalıştığından emin olun:
 Tarayıcıdan açın:
 
     http://127.0.0.1:5000
+
+
+
+    ## 🧠 Analiz Süreci
+
+1. **Kullanıcı**, arayüze Medium makale linkini girer  
+2. **Backend**, `scraper.py` ile makale içeriğini çeker  
+3. **Analyzer**, içeriğe göre AI prompt’unu oluşturur  
+4. **Ollama**, Llama 3.1 modeliyle JSON analiz çıktısı üretir  
+5. **Sistem**, ağırlıklandırılmış final puanı hesaplar  
+6. **Arayüz**, kullanıcıya detaylı analiz raporunu gösterir  
+
+---
+
+## 📦 Kullanılan Teknolojiler
+
+### Backend
+- Python 3.13  
+- Flask  
+- Flask-CORS  
+- Requests  
+
+### AI Katmanı
+- Ollama  
+- Llama 3.1 8B  
+- Prompt Engineering  
+
+### Frontend
+- HTML  
+- CSS  
+- Vanilla JavaScript  
+
+
