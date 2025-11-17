@@ -1,4 +1,5 @@
 📄 Medium Chatbot
+
 "Medium makalelerini profesyonel editör gibi analiz eden yapay zekâ asistanı"
 
 Medium Chatbot, Medium makalelerinin içeriğini otomatik olarak tarayan, başlık-yazar-link bilgisini çıkaran, metni analiz eden ve profesyonel bir içerik denetim checklist’ine göre puanlayan bir yapay zekâ destekli analiz platformudur.
@@ -166,3 +167,4 @@ Pull request aç
 📝 Lisans
 
 Bu proje MIT lisansı ile sunulmuştur.
+
